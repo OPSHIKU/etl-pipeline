@@ -1,0 +1,131 @@
+<svg width="1040" height="760" viewBox="0 0 1040 760" xmlns="http://www.w3.org/2000/svg" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#3d3d3a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#A32D2D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1040" height="760" fill="#FFFFFF"/>
+  <text x="520" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">ETL Pipeline — Architecture &amp; Data Flow</text>
+  <text x="520" y="54" text-anchor="middle" font-size="13" fill="#666">Sources → Extract → Validate → Transform → Load → SQL Database, with logging &amp; alerts throughout</text>
+
+  <!-- ============ SOURCES ============ -->
+  <rect x="30" y="90" width="180" height="60" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+  <text x="120" y="114" text-anchor="middle" font-size="13" font-weight="bold" fill="#26215C">CSV file</text>
+  <text x="120" y="132" text-anchor="middle" font-size="11" fill="#3C3489">raw_sales.csv</text>
+
+  <rect x="30" y="170" width="180" height="60" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+  <text x="120" y="194" text-anchor="middle" font-size="13" font-weight="bold" fill="#26215C">Web API</text>
+  <text x="120" y="212" text-anchor="middle" font-size="11" fill="#3C3489">Weather REST endpoint</text>
+
+  <!-- ============ EXTRACT ============ -->
+  <rect x="260" y="90" width="190" height="140" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+  <text x="355" y="112" text-anchor="middle" font-size="13" font-weight="bold" fill="#04342C">EXTRACT</text>
+  <text x="355" y="132" text-anchor="middle" font-size="10.5" fill="#085041">csv_extractor.py</text>
+  <text x="355" y="148" text-anchor="middle" font-size="10.5" fill="#085041">api_extractor.py</text>
+  <text x="355" y="168" text-anchor="middle" font-size="10.5" fill="#085041">(retry + backoff</text>
+  <text x="355" y="182" text-anchor="middle" font-size="10.5" fill="#085041">on API failures)</text>
+  <text x="355" y="204" text-anchor="middle" font-size="10" fill="#0F6E56" font-style="italic">raw records (dicts)</text>
+
+  <line x1="210" y1="120" x2="258" y2="140" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="210" y1="200" x2="258" y2="180" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- ============ VALIDATE ============ -->
+  <rect x="500" y="90" width="200" height="140" rx="10" fill="#FAECE7" stroke="#993C1D" stroke-width="1"/>
+  <text x="600" y="112" text-anchor="middle" font-size="13" font-weight="bold" fill="#4A1B0C">VALIDATE</text>
+  <text x="600" y="132" text-anchor="middle" font-size="10.5" fill="#712B13">Pydantic v2 schemas</text>
+  <text x="600" y="148" text-anchor="middle" font-size="10.5" fill="#712B13">SalesRecord / WeatherRecord</text>
+  <text x="600" y="168" text-anchor="middle" font-size="10.5" fill="#712B13">type + range + email</text>
+  <text x="600" y="182" text-anchor="middle" font-size="10.5" fill="#712B13">+ business-rule checks</text>
+  <text x="600" y="204" text-anchor="middle" font-size="10" fill="#993C1D" font-style="italic">valid rows / rejected rows</text>
+
+  <line x1="450" y1="160" x2="498" y2="160" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- reject rate gate -->
+  <polygon points="600,250 660,285 600,320 540,285" fill="#FBEAF0" stroke="#993556" stroke-width="1"/>
+  <text x="600" y="281" text-anchor="middle" font-size="10.5" fill="#4B1528" font-weight="bold">Reject rate</text>
+  <text x="600" y="296" text-anchor="middle" font-size="10.5" fill="#4B1528">&gt; threshold?</text>
+  <line x1="600" y1="230" x2="600" y2="248" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- ============ TRANSFORM ============ -->
+  <rect x="500" y="360" width="200" height="120" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="1"/>
+  <text x="600" y="382" text-anchor="middle" font-size="13" font-weight="bold" fill="#042C53">TRANSFORM</text>
+  <text x="600" y="402" text-anchor="middle" font-size="10.5" fill="#0C447C">clean, normalize, dedupe</text>
+  <text x="600" y="418" text-anchor="middle" font-size="10.5" fill="#0C447C">derive columns</text>
+  <text x="600" y="434" text-anchor="middle" font-size="10.5" fill="#0C447C">(e.g. total_amount,</text>
+  <text x="600" y="450" text-anchor="middle" font-size="10.5" fill="#0C447C">title-cased fields)</text>
+
+  <text x="628" y="240" font-size="10.5" fill="#993556">No</text>
+  <line x1="600" y1="320" x2="600" y2="358" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Abort path -->
+  <text x="700" y="278" font-size="10.5" fill="#A32D2D">Yes</text>
+  <line x1="660" y1="285" x2="770" y2="285" stroke="#A32D2D" stroke-width="1.2" marker-end="url(#arrowRed)"/>
+  <rect x="770" y="255" width="180" height="60" rx="8" fill="#FCEBEB" stroke="#A32D2D" stroke-width="1"/>
+  <text x="860" y="279" text-anchor="middle" font-size="12" font-weight="bold" fill="#501313">Abort load</text>
+  <text x="860" y="296" text-anchor="middle" font-size="10.5" fill="#791F1F">fire alert (below)</text>
+
+  <!-- ============ LOAD ============ -->
+  <rect x="500" y="530" width="200" height="120" rx="10" fill="#EAF3DE" stroke="#3B6D11" stroke-width="1"/>
+  <text x="600" y="552" text-anchor="middle" font-size="13" font-weight="bold" fill="#173404">LOAD</text>
+  <text x="600" y="572" text-anchor="middle" font-size="10.5" fill="#27500A">SQLAlchemy engine</text>
+  <text x="600" y="588" text-anchor="middle" font-size="10.5" fill="#27500A">upsert-lite by PK</text>
+  <text x="600" y="604" text-anchor="middle" font-size="10.5" fill="#27500A">writes: fact tables +</text>
+  <text x="600" y="620" text-anchor="middle" font-size="10.5" fill="#27500A">rejected_records audit</text>
+
+  <line x1="600" y1="480" x2="600" y2="528" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- ============ DATABASE ============ -->
+  <g>
+    <path d="M 780 550 A 90 14 0 0 1 960 550 L 960 630 A 90 14 0 0 1 780 630 Z" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="1"/>
+    <ellipse cx="870" cy="550" rx="90" ry="14" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="1"/>
+  </g>
+  <text x="870" y="555" text-anchor="middle" font-size="12" font-weight="bold" fill="#2C2C2A">SQL Database</text>
+  <text x="870" y="592" text-anchor="middle" font-size="10.5" fill="#444441">SQLite (default) /</text>
+  <text x="870" y="608" text-anchor="middle" font-size="10.5" fill="#444441">PostgreSQL (DB_ENGINE=postgres)</text>
+  <text x="870" y="624" text-anchor="middle" font-size="9.5" fill="#5F5E5A" font-style="italic">sales, weather_snapshots,</text>
+  <line x1="700" y1="590" x2="778" y2="590" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="870" y="638" text-anchor="middle" font-size="9.5" fill="#5F5E5A" font-style="italic">rejected_records, pipeline_runs</text>
+
+  <!-- ============ LOGGING (spans everything, left rail) ============ -->
+  <rect x="30" y="360" width="190" height="290" rx="10" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="125" y="384" text-anchor="middle" font-size="13" font-weight="bold" fill="#2C2C2A">LOGGING</text>
+  <text x="125" y="406" text-anchor="middle" font-size="10.5" fill="#444441">logger_config.py</text>
+  <text x="125" y="424" text-anchor="middle" font-size="10.5" fill="#444441">Rotating file handler +</text>
+  <text x="125" y="440" text-anchor="middle" font-size="10.5" fill="#444441">console handler</text>
+  <text x="125" y="462" text-anchor="middle" font-size="10.5" fill="#444441">Every stage logs:</text>
+  <text x="125" y="480" text-anchor="middle" font-size="10" fill="#5F5E5A">row counts, rejections,</text>
+  <text x="125" y="496" text-anchor="middle" font-size="10" fill="#5F5E5A">retries, timings, errors</text>
+  <text x="125" y="520" text-anchor="middle" font-size="10.5" fill="#444441">→ logs/pipeline.log</text>
+
+  <!-- dashed connectors from logging rail up to each stage -->
+  <line x1="220" y1="400" x2="355" y2="230" stroke="#888780" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="220" y1="420" x2="600" y2="230" stroke="#888780" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="220" y1="440" x2="600" y2="420" stroke="#888780" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="220" y1="460" x2="600" y2="590" stroke="#888780" stroke-width="1" stroke-dasharray="3 3"/>
+
+  <!-- ============ ALERTS ============ -->
+  <rect x="770" y="360" width="200" height="120" rx="10" fill="#FCEBEB" stroke="#A32D2D" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="870" y="384" text-anchor="middle" font-size="13" font-weight="bold" fill="#501313">ALERTS</text>
+  <text x="870" y="406" text-anchor="middle" font-size="10.5" fill="#791F1F">alerts.py</text>
+  <text x="870" y="424" text-anchor="middle" font-size="10.5" fill="#791F1F">On any stage exception</text>
+  <text x="870" y="440" text-anchor="middle" font-size="10.5" fill="#791F1F">or reject-rate breach:</text>
+  <text x="870" y="458" text-anchor="middle" font-size="10.5" fill="#791F1F">CRITICAL log entry +</text>
+  <text x="870" y="474" text-anchor="middle" font-size="10.5" fill="#791F1F">Slack/Teams webhook</text>
+
+  <line x1="860" y1="315" x2="860" y2="358" stroke="#A32D2D" stroke-width="1.2" marker-end="url(#arrowRed)"/>
+
+  <!-- legend -->
+  <rect x="30" y="690" width="14" height="14" fill="#EAF3DE" stroke="#3B6D11"/>
+  <text x="50" y="701" font-size="10.5" fill="#333">Pipeline stage</text>
+  <rect x="180" y="690" width="14" height="14" fill="#FCEBEB" stroke="#A32D2D"/>
+  <text x="200" y="701" font-size="10.5" fill="#333">Failure / alert path</text>
+  <rect x="360" y="690" width="14" height="14" fill="#F1EFE8" stroke="#5F5E5A" stroke-dasharray="3 3"/>
+  <text x="380" y="701" font-size="10.5" fill="#333">Cross-cutting concern (logging)</text>
+
+  <text x="520" y="735" text-anchor="middle" font-size="10.5" fill="#888">pipeline.py orchestrates one Extract→Validate→Transform→Load cycle independently per source,</text>
+  <text x="520" y="750" text-anchor="middle" font-size="10.5" fill="#888">so a failure in one source (e.g. API) does not block the other (e.g. CSV) from loading.</text>
+</svg>

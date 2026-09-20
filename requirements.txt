@@ -1,0 +1,6 @@
+pandas>=2.0.0
+pydantic[email]>=2.0.0
+SQLAlchemy>=2.0.0
+requests>=2.31.0
+psycopg2-binary>=2.9.0   # only required if DB_ENGINE=postgres
+pytest>=7.4.0            # for running tests/
